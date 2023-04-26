@@ -1,0 +1,228 @@
+﻿@model JobPortalLibrary.JobSeeker.SeekerUser
+
+@{
+    ViewBag.Title = "Search";
+    //Layout = "~/Views/Shared/JobSeeker_Layout.cshtml";
+}
+
+<html>
+<body class="SearchView">
+
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+
+    <script>
+
+        $(document).ready(function () {
+            gridDataTableView("Grid Example.xls");
+        });
+
+        gridDataTableView = function (fname) {
+            $('#tblGrid').dataTable({
+                "bFilter": true,
+                "bLengthChange": false, "bPaginate": true, "bInfo": true,
+                dom: 'Bfrtip',
+                "order": [[0, 'desc'], [1, 'desc']],
+                buttons: [{ extend: 'excelHtml5', text: 'Export to Excel', className: 'link_button', title: fname }]
+            });
+        }
+    </script>
+
+    <form method="Post">
+        <label for="Search"></label>
+        <input type="text" name="jobTitle" id="Search" />
+
+
+        <form method="Post">
+            <label for="Search"></label>
+            <input type="text" name="JobLocation" id="Search" />
+
+
+            <form method="Post">
+                <label for="Search"></label>
+                <input type="text" name="Salary" id="Search" />
+               
+                <button ="btn btn-dark border-0 w-100" id="submit" style="padding:0px; width:100px; background-color:thistle">Search</button>
+
+
+            </form>
+            <label>
+                @Html.DisplayFor(model => model.JobTitle)
+            </label>
+            <br />
+            <br />
+            <br />
+
+            @if (@Model != null)
+            {
+                foreach (var item in @Model.user)
+                {
+                    <br />
+                    <br />
+                    <div class="card mt-4" style="width:60rem;height:10rem;background-color:skyblue">
+                        <table id="tblGrid">
+                            <thead>
+                                <tr>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr>
+                                    <td>
+                                        @Html.HiddenFor(modelItem => item.PostJobCode)
+                                    </td>
+                                    <td>
+                                        <strong style="font-size:30px">@item.JobTitle</strong>
+                                        <br />
+                                        @item.JobLocation
+                                        <br />
+                                        @item.Salary
+                                        <br />
+                                        @item.JobType
+                                        <br />
+                                        @item.EndDate
+                                    </td>
+                                    <td>
+                                        <button type="button">
+                                            <a class="ApplyJobs" href="javascript:;" style="background-color:burlywood" data-id="@item.PostJobCode">ApplyJobs</a>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br />
+                    <br />
+                }
+            }
+            
+            <div id="partialModal" class="modal" tabindex="-1" role="dialog" style="position:center">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title" style="color:lightgreen; font-size:xx-large"></h3>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button"><a href="~/JobSeeker/Search">Close</a></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <script src="~/Scripts/jquery-3.6.4.min.js"></script>
+            <script src="~/Scripts/bootstrap.min.js"></script>
+            <script src="~/Scripts/bootstrap.js"></script>
+            <script type="text/javascript">
+                $(function () {
+                    $(".ApplyJobs").click(function () {
+                        var $buttonClicked = $(this);
+                        var id = $buttonClicked.attr('data-id')
+                        /* var id = $(this).closest("tr").find("td").eq(0).html();*/
+                        $.ajax({
+                            type: "GET",
+                            url: "/JobSeeker/ApplyJobs",
+                            data: { PostJobCode: id },
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "html",
+                            success: function (response) {
+                                $("#partialModal").find(".modal-body").html(response);
+                                $("#partialModal").modal('show');
+                            },
+                            failure: function (response) {
+                                alert(response.responseText);
+                            },
+                            error: function (response) {
+                                alert(response.responseText);
+                            }
+                        });
+                    });
+                });
+            </script>
+</body>
+</html>
+
+<style type="text/css">
+    body {
+        font: 14px Times New Roman;
+    }
+
+    .Submit tr th {
+        padding: 8px;
+        color: black;
+        border: 2px solid black;
+    }
+
+    .card {
+        /* Add shadows to create the "card" effect */
+        box-shadow: 0 6px 8px 0 rgba(0,0,0,0.2);
+        transition: 0.5s;
+    }
+
+        /* On mouse-over, add a deeper shadow */
+        .card:hover {
+            box-shadow: 0 20px 16px 0 rgba(0,0,0,0.2);
+        }
+
+    /* Add some padding inside the card container */
+    .container {
+        padding: 2px 16px;
+    }
+
+    .ApplyJobs {
+        padding: 0px;
+        background-color: darkgreen;
+    }
+
+    .ApplyJobs {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, 0%);
+    }
+
+    .ApplyJobs {
+        display: block;
+        width: 100px;
+        height: 40px;
+        line-height: 40px;
+        font-size: 16px;
+        font-family: Times New Roman;
+        color: black;
+        letter-spacing: 2px;
+        text-align: center;
+        position: relative;
+        transition: all .50s;
+    }
+
+
+
+    .ApplyJobs:after {
+        position: absolute;
+        content: "";
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background: #ff003b;
+        transition: all .35s;
+    }
+
+    #tblGrid {
+        padding: 0px;
+        background-color: lightseagreen;
+    }
+
+    .SearchView {
+        /*background-color: darkgoldenrod;*/
+        background-image: linear-gradient(to right, rgba(0,25,40,0), rgba(0,22,0,2));
+    }

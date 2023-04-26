@@ -1,0 +1,142 @@
+﻿@model JobPortalLibrary.JobSeeker.SeekerUser
+@using (Html.BeginForm("SubmitPDF", "JobSeeker", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+{
+<div>
+    <h4>SeekerUser</h4>
+    <hr />
+    <dl class="dl-horizontal">
+
+        <dd>
+            @Html.HiddenFor(model => model.PostJobCode)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CompanyName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CompanyName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.JobTitle)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.JobTitle)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.JobLocation)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.JobLocation)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Salary)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Salary)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.JobType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.JobType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.JobDescription)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.JobDescription)
+        </dd>
+    </dl>
+
+  
+    <input type="file" id="myFile" name="myFile">
+
+    <button type="submit" class="btn btn-primary" id="Save">Upload</button>
+
+
+
+
+</div>
+}
+
+
+
+
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Back to List", "Index")
+
+</p>
+
+<div id="partialModal" class="modal" tabindex="-1" role="dialog" style="position:center">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" style="color:lightgreen; font-size:xx-large"></h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button"><a href="~/JobSeeker/Search/ApplyJobs/SubmitApplication">Close</a></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/Scripts/jquery-3.6.4.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $(".SubmitApplication").click(function () {
+            var $buttonClicked = $(this);
+            var id = $buttonClicked.attr('data-id')
+            /* var id = $(this).closest("tr").find("td").eq(0).html();*/
+            $.ajax({
+                type: "POST",
+                url: "/JobSeeker/Search/ApplyJobs/SubmitApplication",
+                data: { PostJobCode: id },
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    $("#partialModal").find(".modal-body").html(response);
+                    $("#partialModal").modal('show');
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+
+<style type="text/css">
+    body {
+        font: 10px Times New Roman;
+    }
+    #partialModal {
+        padding: 0px;
+        background-color: transparent ;
+        
+    }
+    #partialModal {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, 0%);
+    }
